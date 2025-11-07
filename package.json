@@ -1,0 +1,18 @@
+{
+  "name": "api_key",
+  "version": "1.0.0",
+  "description": "",
+  "main": "auth.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "googleapis": "^164.1.0",
+    "open": "^10.2.0"
+  }
+}
