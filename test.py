@@ -10,7 +10,7 @@ import auth
 warnings.filterwarnings('ignore', category=FutureWarning, module='google.api_core._python_version_support')
 
 # API 키 디렉토리 경로
-API_KEY_DIR = "/Users/a1/Documents/github/api_key"
+API_KEY_DIR = "/Users/a1/github/api_key"
 ENV_PATH = os.path.join(API_KEY_DIR, ".env")
 
 def ensure_env_loaded():

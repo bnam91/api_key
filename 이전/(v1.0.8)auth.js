@@ -132,27 +132,26 @@ async function getCredentials() {
   if (saved) {
     oAuth2Client.setCredentials(saved);
     
-    // refresh_token이 있으면 항상 갱신 시도 (만료 여부와 관계없이)
-    if (saved.refresh_token) {
-      try {
-        const { credentials } = await oAuth2Client.refreshAccessToken();
-        oAuth2Client.setCredentials(credentials);
-        saveCredentials(credentials);
-        return oAuth2Client;
-      } catch (err) {
-        // 갱신 실패 시 (refresh_token이 만료되었거나 취소된 경우) 새로 인증
-        console.log("토큰 갱신 실패. 재인증이 필요합니다...");
+    // 토큰이 만료되었는지 확인하고 자동 갱신
+    const isExpired = saved.expiry_date && saved.expiry_date <= Date.now();
+    
+    if (isExpired) {
+      // refresh_token이 있으면 토큰 갱신 시도
+      if (saved.refresh_token) {
+        try {
+          const { credentials } = await oAuth2Client.refreshAccessToken();
+          oAuth2Client.setCredentials(credentials);
+          saveCredentials(credentials);
+        } catch (err) {
+          // 갱신 실패 시 (refresh_token이 만료되었거나 취소된 경우) 새로 인증
+          const client = await getNewCredentialsViaLocalServer(oAuth2Client);
+          return client;
+        }
+      } else {
+        // refresh_token이 없으면 새로 인증
         const client = await getNewCredentialsViaLocalServer(oAuth2Client);
         return client;
       }
-    }
-    
-    // refresh_token이 없고 토큰이 만료된 경우 새로 인증
-    const isExpired = saved.expiry_date && saved.expiry_date <= Date.now();
-    if (isExpired) {
-      console.log("토큰이 만료되었습니다. 재인증이 필요합니다...");
-      const client = await getNewCredentialsViaLocalServer(oAuth2Client);
-      return client;
     }
     
     return oAuth2Client;
